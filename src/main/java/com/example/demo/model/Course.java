@@ -1,20 +1,23 @@
 package com.example.demo.model;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Course {
-    @Id
-    private String courseCode;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long courseCode;
     private String courseName;
+
+    @OneToMany(mappedBy = "course")
+    private List<Grade> grades;
 }

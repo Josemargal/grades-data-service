@@ -6,11 +6,10 @@ import com.example.demo.model.Grade;
 import com.example.demo.repository.CourseRepository;
 import com.example.demo.repository.GradeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class CourseService {
@@ -21,20 +20,18 @@ public class CourseService {
     @Autowired
     private GradeRepository gradeRepository;
 
-    public Optional<Course> getCourseByCode(String courseCode) {
-        return courseRepository.findById(courseCode);
+
+    public Course getCourseByCode(Long courseCode) {
+        return courseRepository.findById(courseCode).orElse(null);
     }
 
-    public List<CourseGradeDTO> getGradesByCourseCode(String courseCode) {
-        List<Grade> grades = gradeRepository.findByCourseCode(courseCode);
-
-        return grades.stream()
-                .map(grade -> new CourseGradeDTO(
-                        grade.getCourse().getCourseCode(),
-                        grade.getCourse().getCourseName(),
-                        grade.getStudentId(),
-                        grade.getGrade()
-                ))
-                .collect(Collectors.toList());
+    public CourseGradeDTO getCourseGrade(Long courseCode) {
+        Course course = getCourseByCode(courseCode);
+        if (course == null){
+            return null;
+        }
+        List<Grade> grades = gradeRepository.findByCourse_CourseCode(courseCode);
+        return new CourseGradeDTO(course.getCourseName(), grades);
     }
+
 }
